@@ -25,24 +25,28 @@
 	<link rel="stylesheet" href="css/font-awesome.min.css" />
 	<link href="css/bootstrap.css" rel="stylesheet">
 	<link rel="stylesheet" href="css/leaflet.label.css" />
-	
-    <script type="text/javascript" src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+		<link rel="stylesheet" href="css/MarkerCluster.css" />
+	<link rel="stylesheet" href="css/MarkerCluster.Default.css" />
+	<!-- source codes to plugins -->
+    <script type="text/javascript" src="js/jquery-1.11.0.js"></script>
 	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAw9yX3E89LxBWYg4hdKePRgx9ti2tGWPk&sensor=false"></script>
 	<script src="js/leaflet-src.js"></script>
 	<script src="js/L.Control.Pan.js" ></script>   
 	<script src="js/L.Control.Zoomslider.js"></script>
+	<script type="text/javascript" src="js/javascript.util.js"></script>
+	<script src="js/jsts.js"></script>
 	<script src="js/leaflet-dvf.js"></script>
 	<script src="js/leaflet-filecontrol-new.js"></script>
-     <script src="data/ResidentialMobility.js"></script>
-         <script src="data/PlanningNeighbrhd.js"></script>
-         <script src="data/Income.js"></script>
-         <script src="js/leaflet.label-src.js"></script>
-
-	 
-	 
-	 
+	<script src="js/leaflet.label-src.js"></script>
+	<script src="js/leaflet.markercluster-src.js"></script>
 	 <script src="js/geostats.js"></script>
-
+	 
+	<!-- data -->
+	<script src="data/ResidentialMobility.js"></script>		 
+	<script src="data/PlanningNeighbrhd.js"></script>
+	<script src="data/Income.js"></script>
+	<script src="data/RaceEthnicity.js"></script>
+	<script src="data/publicsch.js"></script>
 	<!--Script to use google maps as Base: taken from http://matchingnotes.com/using-google-map-tiles-with-leaflet-->
 	<script src="js/leaflet-google.js"></script>
   </head>
@@ -87,7 +91,7 @@
 		style:{
 				fillColor:'#fff',
 				weight: 2,
-				opacity: 0.5,
+				opacity: 1.1,
 				color: '#d95f0e',
 				weight: 5,
 				dashArray: '1',
@@ -102,7 +106,7 @@
 		}
 		
 		
-		});
+		}).addTo(map);
 		//neighdPlan.setZIndex(3);
 		layersControl.addOverlay(neighdPlan, "Neighbourhood Boundary");
 	
@@ -208,9 +212,9 @@
 		function zoomToFeature(e) {
 			map.fitBounds(e.target.getBounds());
 		}
-	var legend = L.control({position: 'bottomright'});
+	var tal = L.control({position: 'bottomright'});
 
-		legend.onAdd = function (map) {
+		tal.onAdd = function (map) {
 
 			var div = L.DomUtil.create('div', 'info legend'),
 				grades = range,
@@ -226,15 +230,9 @@
 			return div;
 		};
 
-	legend.addTo(map);
-	
-	
-	
-	
-	
-	
-	
-	
+	tal.addTo(map);
+		
+
 	var residentLayer = L.geoJson(residential,{style:style, onEachFeature: onEachFeature});
 	
 	 
@@ -244,9 +242,110 @@
 		layersControl.addOverlay(residentLayer, 'Resident Mobility');
 	 
 
+	 //Create symbols to describe population
 	 
+	 	var rValues = []; // will store values
+		for (i = 0; i < race.features.length; i++) {
+			rValues.push(race.features[i].properties.Pop2010);
+		}
 	 
-		  
+		rserie = new geostats(rValues);
+		var rmax = rserie.max();
+		
+		var electionOptions = {
+			recordsLayer: 'features',
+			locationMode: L.LocationModes.GEOJSON,
+			chartOptions: {
+				'properties.Black_cnt': {
+					displayName: 'Black Population',
+					color: 'hsl(56,100%,25%)',
+					fillColor: 'hsl(56,80%,55%)',
+					maxValue: 800000
+				},
+				'properties.Asian_cnt': {
+					displayName: 'Asian Population',
+					color: 'hsl(7,100%,65%)',
+					fillColor: 'hsl(7,80%,55%)',
+					maxValue: 800000
+				},
+				'properties.Latin_cnt': {
+					displayName: 'Latin Population',
+					color: 'hsl(228,100%,25%)',
+					fillColor: 'hsl(228,80%,55%)',
+					maxValue: 800000
+				},
+				'properties.White_cnt': {
+					displayName: 'White Population',
+					color: 'hsl(127,100%,25%)',
+					fillColor: 'hsl(127,80%,55%)',
+					maxValue: 800000
+				}, 'properties.Other_cnt': {
+					displayName: 'Others',
+					color: 'hsl(253,100%,25%)',
+					fillColor: 'hsl(253,80%,55%)',
+					maxValue: 800000
+				}
+			},
+			layerOptions: {
+				fillOpacity: 0.8,
+				opacity: 1,
+				weight: 1,
+				radius: 10
+			},
+			tooltipOptions: {
+				iconSize: new L.Point (60,60),
+				iconAnchor: new L.Point (-5,50)
+			},
+			displayOptions:{
+				'properties.Pop2010': {
+					
+					radius: new L.LinearFunction(new L.Point(0,10), new L.Point(rmax,70))
+				}
+			}
+
+		};
+	var raceChart = new L.PieChartDataLayer(race,electionOptions);
+	var raceBoundary = L.geoJson(race,{
+		style:{
+				fillColor:'#fff',
+				weight: 1,
+				opacity: 0.8,
+				color: '#59459c',
+				weight: 1,
+				dashArray: '2',
+				fillOpacity: 0.5
+		}});
+	
+
+	electionChartLayer = L.layerGroup([raceChart, raceBoundary]);
+
+	map.addLayer(electionChartLayer);
+	layersControl.addOverlay(electionChartLayer, 'Ethnic Group');
+	
+		//symbols for schools
+	
+	var schLayer = L.geoJson(school,{
+		style:{
+				fillColor:'#fff',
+				weight: 2,
+				opacity: 3.1,
+				color: '#d95f0e',
+				weight: 5,
+				dashArray: '1',
+				fillOpacity: 0.5
+		},
+		onEachFeature: function(feature,layer){
+						layer.bindPopup(feature.properties.FACILITY_N);			
+			}
+		
+		
+		});
+	
+
+		var markers = L.markerClusterGroup();
+		markers.addLayer(schLayer);
+		layersControl.addOverlay(markers, "School");
+
 		//load geojson file
 		//var style = {color:'red', opacity: 1.0, fillOpacity: 1.0, weight: 2, clickable: true};
         L.Control.FileLayerLoad.LABEL = '<i class="fa fa-folder-open"></i>';
@@ -273,6 +372,28 @@
 		
 		}
 
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		
 	
 	</script>
