@@ -1,290 +1,79 @@
 <!DOCTYPE html>
 <html>
+
   <head>
-    <meta charset="utf-8">
-    <title>Assignment 1: Residential Mobility</title>
-    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
-    <style type="text/css">
-      html { height: 100%; width: 100%;}
-      body { height: 100%; width: 100%; padding-top: 60px}
-	   #map {
-		position: absolute;
-		float: left;
-		height: 94%;
-		width: 98%;
-		z-index: 1;
-	}
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Assignment : Assignment_1" />
 
-    </style>
-	
-	<!--tells script where css file is for styling leaflet icons -->
-	
-	<link rel="stylesheet" href="css/leaflet.css">
-    <link rel="stylesheet" href="css/L.Control.Zoomslider.css" />
-	<link rel="stylesheet" href="css/L.Control.Pan.css" />
-	<link rel="stylesheet" href="css/font-awesome.min.css" />
-	<link href="css/bootstrap.css" rel="stylesheet">
-	<link rel="stylesheet" href="css/leaflet.label.css" />
-	
-    <script type="text/javascript" src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
-	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAw9yX3E89LxBWYg4hdKePRgx9ti2tGWPk&sensor=false"></script>
-	<script src="js/leaflet-src.js"></script>
-	<script src="js/L.Control.Pan.js" ></script>   
-	<script src="js/L.Control.Zoomslider.js"></script>
-	<script src="js/leaflet-dvf.js"></script>
-	<script src="js/leaflet-filecontrol-new.js"></script>
-     <script src="data/ResidentialMobility.js"></script>
-         <script src="data/PlanningNeighbrhd.js"></script>
-         <script src="data/Income.js"></script>
-         <script src="js/leaflet.label-src.js"></script>
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
 
-	 
-	 
-	 
-	 <script src="js/geostats.js"></script>
-
-	<!--Script to use google maps as Base: taken from http://matchingnotes.com/using-google-map-tiles-with-leaflet-->
-	<script src="js/leaflet-google.js"></script>
+    <title>Assignment</title>
   </head>
+
   <body>
 
-  <div class="navbar navbar-inverse navbar-fixed-top">
-      <div class="navbar-inner">
-        <div class="container">
-          <a class="brand">Residential Mobility of San Francisco</a>
-        </div>
-      </div>
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/wkwong2010/Assignment">View on GitHub</a>
+
+          <h1 id="project_title">Assignment</h1>
+          <h2 id="project_tagline">Assignment_1</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/wkwong2010/Assignment/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/wkwong2010/Assignment/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
     </div>
-	
-	
-	
-	
-	
-	
-	    <div class="container-fluid">
-    	<div class="row-fluid">
-			<div id="map" class="span9"></div>
-			<div id="legend" class="span3"></div>
-		</div>
-	</div>
-	<script type='text/javascript'>
-	
-  
-      
-	 window.onload = function(){
-		  //Leaftlet function to create new map - initialize the map on the "map" div with a given center and zoom
 
-	  var map = new L.Map('map', {center: new L.LatLng(37.77493,-122.41942), zoom: 12});
-	  var googleLayer = new L.Google('ROADMAP');
-	  var osm = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png',{attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors' });
-	  map.addLayer(googleLayer,true);
-	  var layersControl = L.control.layers({'OSM': osm, 'Google': googleLayer});
-	  layersControl.addTo(map);	
-	
-	
-	
-			var neighdPlan = L.geoJson(neighbourlayer,{
-		style:{
-				fillColor:'#fff',
-				weight: 2,
-				opacity: 0.5,
-				color: '#d95f0e',
-				weight: 5,
-				dashArray: '1',
-				fillOpacity: 0.5
-		},
-		onEachFeature: function(feature,layer){
-				label = new L.Label();
-				label.setContent(feature.properties["neighborho"]);
-				label.setLatLng(layer.getBounds().getCenter())
-				map.showLabel(label);
-						
-		}
-		
-		
-		});
-		//neighdPlan.setZIndex(3);
-		layersControl.addOverlay(neighdPlan, "Neighbourhood Boundary");
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-		var arrayValues = []; // will store values
-		for (i = 0; i < residential.features.length; i++) {
-			arrayValues.push(residential.features[i].properties.move_pct);
-		}
-	    serie = new geostats(arrayValues);
-		serie.getJenks(7);
-		var range = serie.ranges;
-		var colors =  L.ColorBrewer.Sequential.Blues['7'].slice(0);
-	    serie.setColors(colors); 
-	//addNeighbourhood Boundary	
-		
-		
-		
-		
-		
-		
-		
-	function highlightFeature(e) {
-    var layer = e.target;
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h3>
+<a name="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages"><span class="octicon octicon-link"></span></a>Welcome to GitHub Pages.</h3>
 
-    layer.setStyle({
-        weight: 5,
-        color: '#666',
-        dashArray: '',
-        fillOpacity: 0.7
-    });
-	
-	 info.update(layer.feature.properties);
+<p>This automatic page generator is the easiest way to create beautiful pages for all of your projects. Author your page content here using GitHub Flavored Markdown, select a template crafted by a designer, and publish. After your page is generated, you can check out the new branch:</p>
 
-    if (!L.Browser.ie && !L.Browser.opera) {
-        layer.bringToFront();
-    }
-}
-		
-		
-		var info = L.control();
+<pre><code>$ cd your_repo_root/repo_name
+$ git fetch origin
+$ git checkout gh-pages
+</code></pre>
 
-		info.onAdd = function (map) {
-			this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
-			this.update();
-			return this._div;
-		};
+<p>If you're using the GitHub for Mac, simply sync your repository and you'll see the new branch.</p>
 
-		// method that we will use to update the control based on feature properties passed
-		info.update = function (props) {
-			this._div.innerHTML = '<h4>% of Residents 1 year and older,<br> living in the same house as one year ago<br> </h4>' +  (props ? + props.move_pct 				: 'Hover over an area');
-		};
+<h3>
+<a name="designer-templates" class="anchor" href="#designer-templates"><span class="octicon octicon-link"></span></a>Designer Templates</h3>
 
-		info.addTo(map);
-		
-		
-		
-		
-		
-		function style(feature) {
-			return {
-				fillColor: colors[serie.getClass(feature.properties["move_pct"],range)],
-				weight: 2,
-				opacity: 0.9,
-				color: 'black',
-				//dashArray: '3',
-				fillOpacity: 0.5
-			};
-		}	
-		
-			function resetHighlight(e) {
-					residentLayer.resetStyle(e.target);
-					info.update();
-		}	
-		
-		function onEachFeature(feature, layer) {
-			layer.on({
-				mouseover: highlightFeature,
-				mouseout: resetHighlight,
-				click: zoomToFeature
-			});
-		}
+<p>We've crafted some handsome templates for you to use. Go ahead and continue to layouts to browse through them. You can easily go back to edit your page before publishing. After publishing your page, you can revisit the page generator and switch to another theme. Your Page content will be preserved if it remained markdown format.</p>
 
-		function zoomToFeature(e) {
-			map.fitBounds(e.target.getBounds());
-		}
-	var legend = L.control({position: 'bottomright'});
+<h3>
+<a name="rather-drive-stick" class="anchor" href="#rather-drive-stick"><span class="octicon octicon-link"></span></a>Rather Drive Stick?</h3>
 
-		legend.onAdd = function (map) {
+<p>If you prefer to not use the automatic generator, push a branch named <code>gh-pages</code> to your repository to create a page manually. In addition to supporting regular HTML content, GitHub Pages support Jekyll, a simple, blog aware static site generator written by our own Tom Preston-Werner. Jekyll makes it easy to create site-wide headers and footers without having to copy them across every page. It also offers intelligent blog support and other advanced templating features.</p>
 
-			var div = L.DomUtil.create('div', 'info legend'),
-				grades = range,
-				labels = [];
-			div.innerHTML += '<h>Jenks Interval</h><br>';
-			// loop through our density intervals and generate a label with a colored square for each interval
-			for (var i = 0; i < grades.length; i++) {
-				div.innerHTML +=
-					'<i style="background:' + colors[serie.getClass(grades[i],range)] + '"></i> ' +
-					grades[i] + (grades[i + 1] ? '' + '<br>' : '+');
-			}
+<h3>
+<a name="authors-and-contributors" class="anchor" href="#authors-and-contributors"><span class="octicon octicon-link"></span></a>Authors and Contributors</h3>
 
-			return div;
-		};
+<p>You can <a href="https://github.com/blog/821" class="user-mention">@mention</a> a GitHub username to generate a link to their profile. The resulting <code>&lt;a&gt;</code> element will link to the contributor's GitHub Profile. For example: In 2007, Chris Wanstrath (<a href="https://github.com/defunkt" class="user-mention">@defunkt</a>), PJ Hyett (<a href="https://github.com/pjhyett" class="user-mention">@pjhyett</a>), and Tom Preston-Werner (<a href="https://github.com/mojombo" class="user-mention">@mojombo</a>) founded GitHub.</p>
 
-	legend.addTo(map);
-	
-	
-	
-	
-	
-	
-	
-	
-	var residentLayer = L.geoJson(residential,{style:style, onEachFeature: onEachFeature});
-	
-	 
-	
-	  	map.addLayer(residentLayer);
-		//residentLayer.setZIndex(4);
-		layersControl.addOverlay(residentLayer, 'Resident Mobility');
-	 
+<h3>
+<a name="support-or-contact" class="anchor" href="#support-or-contact"><span class="octicon octicon-link"></span></a>Support or Contact</h3>
 
-	 
-	 
-		  
-		//load geojson file
-		//var style = {color:'red', opacity: 1.0, fillOpacity: 1.0, weight: 2, clickable: true};
-        L.Control.FileLayerLoad.LABEL = '<i class="fa fa-folder-open"></i>';
-		L.Control.fileLayerLoad(layersControl,{
-			fitBounds: true,
-            layerOptions: {style:function(feature) {
-														return feature.properties.style
-							},
-							onEachFeature: function onEachFeature(feature, layer) {
-							// does this feature have a property named popupContent?
-									if (feature.properties && feature.properties.popupContent) {
-										layer.bindPopup(feature.properties.popupContent);
-									}
-							},               
-                              
-                           },
-			//fillColor: fillColorFunction1		 ,  
-						   
-						   
-						   
-						   
-        }).addTo(map);
-		
-		
-		}
+<p>Having trouble with Pages? Check out the documentation at <a href="http://help.github.com/pages">http://help.github.com/pages</a> or contact <a href="mailto:support@github.com">support@github.com</a> and we’ll help you sort it out.</p>
+      </section>
+    </div>
 
-		
-	
-	</script>
-	
-	
-	
-	
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Assignment maintained by <a href="https://github.com/wkwong2010">wkwong2010</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
 
-	
-	
+    
+
   </body>
 </html>
-
-
-
